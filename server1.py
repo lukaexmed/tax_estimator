@@ -1,4 +1,6 @@
+from time import sleep
 from xmlrpc.server import SimpleXMLRPCServer
+import xmlrpc.client
 
 
 class TaxServer:
@@ -43,31 +45,58 @@ class TaxServer:
     
 
     def estimator(self, data):
-        sum_income = 0
+        sum_taxable_income = 0
         sum_witheld = 0
         count = 1
+        if data["tfn"] != "":
+            income_data = self.fetch_PITD(data["tfn"])["income_data"]
+        else:
+            income_data = data["income_data"]
+
         #iterate through income data for and calculate the total income and tax withheld
-        for income, withheld in data["income_data"]:
-            sum_income += income
+        for income, withheld in income_data:
+            sum_taxable_income += income
             sum_witheld += withheld
             print(f"Income #{count}: {income}, Withheld #{count}: {withheld}\n")
             count += 1
 
         #calculate tax and medicare levy
-        tax = self.calculate_tax(sum_income)
-        medicare = self.calculate_ml(sum_income, data["has_phic"])
+        tax = self.calculate_tax(sum_taxable_income)
+        medicare = self.calculate_ml(sum_taxable_income, data["has_phic"])
 
         result = {            
             "person_id": data["person_id"],
             "tfn": data["tfn"],
-            "annual_taxable_income": round(sum_income,2),
+            "annual_taxable_income": round(sum_taxable_income,2),
             "total_tax_witheld": round(sum_witheld,2),
-            "total_net_income": round(sum_income - tax - medicare, 2),
+            "total_net_income": round(sum_taxable_income - tax - medicare, 2),
             "medicare_levy": round(medicare, 2),
             "tax_liability": round(tax, 2),
             "estimated_tax_refund": round(sum_witheld - tax - medicare, 2),
         }
         return result
+    
+    def fetch_PITD(self, tfn):
+        try:
+            #connect to database server
+            print("Connecting to database server...")
+            self.db_server = xmlrpc.client.ServerProxy("http://localhost:8001/")
+            #ping server
+            self.db_server.ping()
+            print("Connected to database server.")
+        except ConnectionRefusedError:
+            print("Could not connect to the database server.")
+            return
+        except (xmlrpc.client.Fault, Exception):
+            print("A error occurred.")
+            return
+        
+        tfn_data = self.db_server.get_taxpayer(tfn)
+        if tfn_data:
+            return tfn_data
+        else:
+            print(f"No data found for TFN {tfn}.")
+            return None
 
 def main():
     #create server
@@ -77,7 +106,7 @@ def main():
     server.register_instance(tax_server)
 
     print("Tax Return Estimate Server is running on localhost, port 8000...")
-    
+        
     try:
         server.serve_forever()
     except KeyboardInterrupt:

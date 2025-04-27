@@ -49,16 +49,16 @@ class TaxClient:
                     break
                 print("Invalid TFN format. Please enter 8 digits.")
 
-            #collect personal details
-            self.first_name = input("Enter your first name: ")
-            self.last_name = input("Enter your last name: ")
+            # #collect personal details
+            # self.first_name = input("Enter your first name: ")
+            # self.last_name = input("Enter your last name: ")
             
-            #collect email
-            while 1:
-                self.email = input("Enter your email address: ")
-                if self.validate_email(self.email):
-                    break
-                print("Invalid email format. Please try again.")
+            # #collect email
+            # while 1:
+            #     self.email = input("Enter your email address: ")
+            #     if self.validate_email(self.email):
+            #         break
+            #     print("Invalid email format. Please try again.")
         else:
             #collect income data
             print("Enter your biweekly income data (1-26 entries):")
@@ -108,6 +108,18 @@ class TaxClient:
         try:
             print("Sending data to server...")
             response = self.server.estimator(self.generate_send_data())
+            return response
+        except ConnectionRefusedError:
+            print("Could not connect to the server.")
+            return self.empty_return_data()
+        except xmlrpc.client.Fault or Exception:
+            print("A error occurred.")
+            return self.empty_return_data()
+        
+    def send_tfn_to_server(self):
+        try:
+            print("Sending TFN to server...")
+            response = self.server.estimator_tfn(self.tfn)
             return response
         except ConnectionRefusedError:
             print("Could not connect to the server.")

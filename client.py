@@ -14,7 +14,6 @@ class TaxClient:
         self.email: str = ""
         self.has_phic: bool = False
         self.has_tfn: bool = False
-        # self.result: Optional[Dict[str, float]] = None
         self.income_data: List[Tuple[float, float]] = []
         self.server = xmlrpc.client.ServerProxy("http://localhost:8000/")
 
@@ -32,7 +31,8 @@ class TaxClient:
 
     def collect_user_data(self):
         #ask for TFN
-        has_tfn = input("Do you have a Tax File Number? (yes/no): ").lower() == 'yes'
+        if (input("Do you have a Tax File Number? (yes/no): ").lower() == 'yes'):
+            self.has_tfn = True
 
         #collect person id
         while 1:
@@ -41,7 +41,7 @@ class TaxClient:
                 break
             print("Invalid Person ID format. Please enter 6 digits.")
 
-        if has_tfn:
+        if self.has_tfn:
             #collect tfn
             while 1:
                 self.tfn = input("Enter your 8-digit Tax File Number: ")
@@ -61,7 +61,7 @@ class TaxClient:
                 print("Invalid email format. Please try again.")
         else:
             #collect income data
-            print("\nEnter your biweekly income data (1-26 entries):")
+            print("Enter your biweekly income data (1-26 entries):")
             count = 0
             while count < 26:
                 income = float(input(f"Enter taxable income #{count + 1} (or -1 to finish): "))
@@ -78,12 +78,21 @@ class TaxClient:
                 count += 1
 
         #private health insurance cover
-        self.has_phic = input("Do you have Private Health Insurance Cover? (yes/no): ").lower() == 'yes'
 
-    def send_to_server(self):
-        """Placeholder for RPC call to server."""
-        # TODO: Implement actual RPC call
-        data = {
+        if(input("Do you have Private Health Insurance Cover? (yes/no): ").lower() == 'yes'):
+            self.has_phic = True
+
+    def empty_return_data(self):
+        return {
+            "person_id": "",
+            "tfn": "",
+            "annual_taxable_income": 0.0,
+            "total_tax_witheld": 0.0,
+            "total_net_income": 0.0,
+            "estimated_tax_refund": 0.0
+        }
+    def generate_send_data(self):
+        return {
             "person_id": self.person_id,
             "tfn": self.tfn,
             "first_name": self.first_name,
@@ -92,21 +101,46 @@ class TaxClient:
             "has_phic": self.has_phic,
             "income_data": self.income_data
         }
-        
-        # Placeholder for RPC call
-        print("Sending data to server...")
-        return {"estimate": 0.0}  # Placeholder response
+
+    def send_to_server(self):
+        try:
+            print("Sending data to server...")
+            response = self.server.calculate_tax_estimate(self.generate_send_data())
+            return response
+        except ConnectionRefusedError:
+            print("Could not connect to the server.")
+            return self.empty_return_data()
+        except xmlrpc.client.Fault or Exception:
+            print("A error occurred.")
+            return self.empty_return_data()
+
 
     def run(self):
         print("Welcome to the Personal Income Tax Return Estimate (PITRE) System")
+        try:
+            #connect to server
+            print("Connecting to server...")
+            self.server = xmlrpc.client.ServerProxy("http://localhost:8000/")
+            #ping server
+            self.server.ping()
+            print("Connected to server.")
+        except ConnectionRefusedError:
+            print("Could not connect to the server.")
+            return
+        except xmlrpc.client.Fault or Exception:
+            print("A error occurred.")
+            return
+        #collect user data
         self.collect_user_data()
-        
+
         #send data to server
         result = self.send_to_server()
-        
         #display results
         print("\nTax Return Estimate Results:")
-        print(f"Estimated tax return: ${result['estimate']:.2f}")
+        print(f"Annual Taxable Income: ${result['annual_taxable_income']:,.2f}")
+        # print(f"Total Tax Withheld: ${result['total_tax_witheld']:,.2f}")
+        # print(f"Total Net Income: ${result['total_net_income']:,.2f}")
+        # print(f"Estimated Tax Refund: ${result['estimated_tax_refund']:,.2f}")
 
 
 def main():

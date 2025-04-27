@@ -36,17 +36,37 @@ class TaxServer:
                     medicare += annual_income * rate
                     break
         return medicare
+    
+    def ping(self):
+        return "Pong"
+    
 
-    def calculate_tax_estimate(self, data: Dict) -> Dict:
+    def calculate_tax_estimate(self, data):
+        sum_income = 0
+        sum_witheld = 0
+        count = 1
+        for income, withheld in data["income_data"]:
+            sum_income += income
+            sum_witheld += withheld
+            print(f"Income nr. {count}: {income}, Withheld nr. {count}: {withheld}\n")
+            count += 1
 
-        return {"estimate": 0.0, "error": str(e)}
+        tax = self.calculate_tax(sum_income) + self.calculate_ml(sum_income, data["has_phic"])
+
+        result = {            
+            "person_id": data["person_id"],
+            "tfn": data["tfn"],
+            "annual_taxable_income": round(sum_income,2),
+            "total_tax_witheld": round(sum_witheld,2),
+            "total_net_income": round(sum_income - tax, 2),
+            "estimated_tax_refund": round(sum_witheld - tax, 2),
+        }
+        return result
 
 def main():
     # Create server
-    server = SimpleXMLRPCServer(("localhost", 8000),
-                               requestHandler=SimpleXMLRPCRequestHandler,
-                               allow_none=True)
-    server.register_introspection_functions()
+    server = SimpleXMLRPCServer(("localhost", 8000))
+    # server.register_introspection_functions()
 
     # Register the TaxServer instance
     tax_server = TaxServer()

@@ -26,7 +26,7 @@ class TaxServer:
         for min, max, rate, base in self.tax_rate:
             if annual_income >= min and annual_income <= max:
                 tax = base + rate*(annual_income - min + 1)
-                print(f"{tax} = {base} + {rate} * ({annual_income} - {min} + 1)")
+                #print(f"{tax} = {base} + {rate} * ({annual_income} - {min} + 1)")
                 break
         return tax
 
@@ -49,8 +49,13 @@ class TaxServer:
         sum_witheld = 0
         count = 1
         if data["tfn"] != "":
-            income_data = self.fetch_PITD(data["tfn"])["income_data"]
+            income_data = self.fetch_PITD(data["tfn"])
+            if isinstance(income_data, str):
+                return income_data
+            income_data = income_data["income_data"]
+            tfn = data["tfn"]
         else:
+            tfn = "No TFN"
             income_data = data["income_data"]
 
         #iterate through income data for and calculate the total income and tax withheld
@@ -64,39 +69,40 @@ class TaxServer:
         tax = self.calculate_tax(sum_taxable_income)
         medicare = self.calculate_ml(sum_taxable_income, data["has_phic"])
 
-        result = {            
+        return {            
             "person_id": data["person_id"],
-            "tfn": data["tfn"],
+            "tfn": tfn,
             "annual_taxable_income": round(sum_taxable_income,2),
             "total_tax_witheld": round(sum_witheld,2),
             "total_net_income": round(sum_taxable_income - tax - medicare, 2),
-            "medicare_levy": round(medicare, 2),
-            "tax_liability": round(tax, 2),
+            # "medicare_levy": round(medicare, 2),
+            # "tax_liability": round(tax, 2),
             "estimated_tax_refund": round(sum_witheld - tax - medicare, 2),
         }
-        return result
     
     def fetch_PITD(self, tfn):
         try:
             #connect to database server
             print("Connecting to database server...")
-            self.db_server = xmlrpc.client.ServerProxy("http://localhost:8001/")
+            db_server = xmlrpc.client.ServerProxy("http://localhost:8001/")
             #ping server
-            self.db_server.ping()
+            db_server.ping()
             print("Connected to database server.")
         except ConnectionRefusedError:
             print("Could not connect to the database server.")
-            return
+            return "Could not connect to the database server."
         except (xmlrpc.client.Fault, Exception):
             print("A error occurred.")
-            return
+            return "A error occurred."
         
-        tfn_data = self.db_server.get_taxpayer(tfn)
-        if tfn_data:
-            return tfn_data
-        else:
-            print(f"No data found for TFN {tfn}.")
-            return None
+        tfn_data = db_server.get_taxpayer(tfn)
+        print(f"TFN Data: {tfn_data}")
+        # if tfn_data:
+        #     return tfn_data
+        # else:
+        #     print(f"No tax records found for the person with TFN = TFN {tfn}.")
+        #     return "No tax records found for the person with TFN = TFN {tfn}."
+        return tfn_data
 
 def main():
     #create server

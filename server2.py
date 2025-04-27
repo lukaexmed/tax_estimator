@@ -21,10 +21,11 @@ class DatabaseServer:
                     "tfn": tfn,
                     "income_data": income_data,
                 }
-            return None
+            print(f"No tax records found for the person with TFN = {tfn}.")
+            return f"No tax records found for the person with TFN = {tfn}."
         except sqlite3.Error as e:
             print(f"Error fetching taxpayer data: {e}")
-            return None
+            return "Error fetching taxpayer data: {e}"
         
     def ping(self):
         return "Pong"
@@ -34,7 +35,7 @@ def main():
     print("Database Server is running on localhost, port 8001...")
     db_server = DatabaseServer()
     server.register_instance(db_server)
-    # print(db_server.get_taxpayer("12345678"))  # Example TFN for testing
+    # print(db_server.get_taxpayer("12345678")) #test
     try:
         server.serve_forever()
     except KeyboardInterrupt:

@@ -89,7 +89,9 @@ class TaxClient:
             "annual_taxable_income": 0.0,
             "total_tax_witheld": 0.0,
             "total_net_income": 0.0,
-            "estimated_tax_refund": 0.0
+            "estimated_tax_refund": 0.0,
+            "medicare_levy": 0.0,
+            "tax_liability": 0.0,
         }
     def generate_send_data(self):
         return {
@@ -105,7 +107,7 @@ class TaxClient:
     def send_to_server(self):
         try:
             print("Sending data to server...")
-            response = self.server.calculate_tax_estimate(self.generate_send_data())
+            response = self.server.estimator(self.generate_send_data())
             return response
         except ConnectionRefusedError:
             print("Could not connect to the server.")
@@ -114,6 +116,14 @@ class TaxClient:
             print("A error occurred.")
             return self.empty_return_data()
 
+    def display_results(self, result):
+        print("\nTax Return Estimate Results:")
+        print(f"Annual Taxable Income: ${result['annual_taxable_income']:,.2f}")
+        print(f"Total Tax Withheld: ${result['total_tax_witheld']:,.2f}")
+        print(f"Total Net Income: ${result['total_net_income']:,.2f}")
+        print(f"Medicare Levy: ${result['medicare_levy']:,.2f}")
+        print(f"Tax Liability: ${result['tax_liability']:,.2f}")
+        print(f"Estimated Tax Refund: ${result['estimated_tax_refund']:,.2f}")
 
     def run(self):
         print("Welcome to the Personal Income Tax Return Estimate (PITRE) System")
@@ -136,11 +146,7 @@ class TaxClient:
         #send data to server
         result = self.send_to_server()
         #display results
-        print("\nTax Return Estimate Results:")
-        print(f"Annual Taxable Income: ${result['annual_taxable_income']:,.2f}")
-        # print(f"Total Tax Withheld: ${result['total_tax_witheld']:,.2f}")
-        # print(f"Total Net Income: ${result['total_net_income']:,.2f}")
-        # print(f"Estimated Tax Refund: ${result['estimated_tax_refund']:,.2f}")
+        self.display_results(result)
 
 
 def main():

@@ -29,6 +29,36 @@ class DatabaseServer:
         
     def ping(self):
         return "Pong"
+    
+    def register_user(self, person_id, tfn, first_name, last_name, email, has_phic, password):
+        try:
+            conn = sqlite3.connect(self.db_path)
+            cursor = conn.cursor()
+            cursor.execute("INSERT INTO Users (person_id, tfn, first_name, last_name, email, has_phic, password) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                           (person_id, tfn, first_name, last_name, email, has_phic, password))
+            conn.commit()
+            conn.close()
+            return True
+        except sqlite3.Error as e:
+            conn.rollback()
+            conn.close()
+            print(f"Error registering user: {e}")
+            return False
+        
+    def login_user(self, person_id, password):
+        try:
+            conn = sqlite3.connect(self.db_path)
+            cursor = conn.cursor()
+            cursor.execute("SELECT * FROM Users WHERE person_id = ? AND password = ?", (person_id, password))
+            result = cursor.fetchone()
+            conn.close()
+            if result:
+                return result
+            else:
+                return "User not found or incorrect password."
+        except sqlite3.Error as e:
+            print(f"Error logging in user: {e}")
+            return f"Error logging in user: {e}"
 
 def main():
     server = SimpleXMLRPCServer(("localhost", 8001))

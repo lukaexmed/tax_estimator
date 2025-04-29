@@ -60,7 +60,8 @@ class DatabaseServer:
             (24, 2454.83, 514.88, 1896.20),
             (25, 2387.93, 503.78, 1850.89),
             (26, 2434.27, 507.50, 1880.60)
-        ]   
+        ]
+
 
     def init_db(self):
         """Initialize the SQLite database and create the table if it doesn't exist."""
@@ -70,6 +71,7 @@ class DatabaseServer:
             cursor.execute('''
                 CREATE TABLE IF NOT EXISTS Taxpayers ( 
                     tfn TEXT PRIMARY KEY UNIQUE
+                    
                 )
             ''')
             cursor.execute('''
@@ -82,6 +84,17 @@ class DatabaseServer:
                     net_wage REAL,
                     UNIQUE(tfn, pay_period_number),
                     FOREIGN KEY (tfn) REFERENCES Taxpayers(tfn)
+                )
+            ''')
+            cursor.execute('''
+                CREATE TABLE IF NOT EXISTS Users ( 
+                    person_id TEXT PRIMARY KEY UNIQUE,
+                    tfn TEXT,
+                    first_name TEXT,
+                    last_name TEXT,
+                    email TEXT,
+                    has_phic INTEGER,
+                    password TEXT
                 )
             ''')
             conn.commit()

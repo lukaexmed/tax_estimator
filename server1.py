@@ -2,7 +2,6 @@ from time import sleep
 from xmlrpc.server import SimpleXMLRPCServer
 import xmlrpc.client
 
-
 class TaxServer:
     def __init__(self):
         self.tax_rate = [
@@ -92,17 +91,47 @@ class TaxServer:
             print("Could not connect to the database server.")
             return "Could not connect to the database server."
         except (xmlrpc.client.Fault, Exception):
-            print("A error occurred.")
-            return "A error occurred."
+            print("An error occurred.")
+            return "An error occurred."
         
         tfn_data = db_server.get_taxpayer(tfn)
-        print(f"TFN Data: {tfn_data}")
-        # if tfn_data:
-        #     return tfn_data
-        # else:
-        #     print(f"No tax records found for the person with TFN = TFN {tfn}.")
-        #     return "No tax records found for the person with TFN = TFN {tfn}."
         return tfn_data
+    
+    def login(self, person_id, password):
+        try:
+            #connect to database server
+            print("Connecting to database server...")
+            db_server = xmlrpc.client.ServerProxy("http://localhost:8001/")
+            #ping server
+            db_server.ping()
+            print("Connected to database server.")
+        except ConnectionRefusedError:
+            print("Could not connect to the database server.")
+            return "Could not connect to the database server."
+        except (xmlrpc.client.Fault, Exception):
+            print("An error occurred.")
+            return "An error occurred."
+        
+        user = db_server.login_user(person_id, password)
+        return user
+
+    def register(self, person_id, tfn, first_name, last_name, email, has_phic, password):
+        try:
+            #connect to database server
+            print("Connecting to database server...")
+            db_server = xmlrpc.client.ServerProxy("http://localhost:8001/")
+            #ping server
+            db_server.ping()
+            print("Connected to database server.")
+        except ConnectionRefusedError:
+            print("Could not connect to the database server.")
+            return "Could not connect to the database server."
+        except (xmlrpc.client.Fault, Exception):
+            print("An error occurred.")
+            return "An error occurred."
+        
+        user = db_server.register_user(person_id, tfn, first_name, last_name, email, has_phic, password)
+        return user
 
 def main():
     #create server

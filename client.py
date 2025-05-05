@@ -4,6 +4,8 @@ from typing import List, Tuple
 import os
 import getpass
 
+server_ip = "localhost"
+server_port = 8000
 
 #colors
 RED = '\033[91m'
@@ -290,7 +292,7 @@ def main():
     clear_screen()
     try:
         #connect to server
-        client.server = xmlrpc.client.ServerProxy("http://localhost:8000/")
+        client.server = xmlrpc.client.ServerProxy(f"http://{server_ip}:{server_port}/")
         #ping server
         client.server.ping()
     except ConnectionRefusedError:

@@ -2,6 +2,11 @@ from time import sleep
 from xmlrpc.server import SimpleXMLRPCServer
 import xmlrpc.client
 
+my_ip="localhost"
+my_port=8000
+data_ip="localhost"
+data_port=8001
+
 class TaxServer:
     def __init__(self):
         self.tax_rate = [
@@ -83,7 +88,7 @@ class TaxServer:
         try:
             #connect to database server
             print("Connecting to database server...")
-            db_server = xmlrpc.client.ServerProxy("http://localhost:8001/")
+            db_server = xmlrpc.client.ServerProxy(f"http://{data_ip}:{data_port}/")
             #ping server
             db_server.ping()
             print("Connected to database server.")
@@ -101,7 +106,7 @@ class TaxServer:
         try:
             #connect to database server
             print("Connecting to database server...")
-            db_server = xmlrpc.client.ServerProxy("http://localhost:8001/")
+            db_server = xmlrpc.client.ServerProxy(f"http://{data_ip}:{data_port}/")
             #ping server
             db_server.ping()
             print("Connected to database server.")
@@ -119,7 +124,7 @@ class TaxServer:
         try:
             #connect to database server
             print("Connecting to database server...")
-            db_server = xmlrpc.client.ServerProxy("http://localhost:8001/")
+            db_server = xmlrpc.client.ServerProxy(f"http://{data_ip}:{data_port}/")
             #ping server
             db_server.ping()
             print("Connected to database server.")
@@ -135,12 +140,12 @@ class TaxServer:
 
 def main():
     #create server
-    server = SimpleXMLRPCServer(("localhost", 8000))
+    server = SimpleXMLRPCServer((my_ip, my_port))
     #create instance of the server and register it
     tax_server = TaxServer()
     server.register_instance(tax_server)
 
-    print("Tax Return Estimate Server is running on localhost, port 8000...")
+    print(f"Tax Return Estimate Server is running on {my_ip}, port {my_port}...")
         
     try:
         server.serve_forever()

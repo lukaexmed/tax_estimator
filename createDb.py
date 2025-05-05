@@ -142,7 +142,7 @@ def main():
     db_server = DatabaseServer()
     db_server.add_taxpayer(db_server.db_path, "12345678", db_server.taxpayer1)
     db_server.add_taxpayer(db_server.db_path, "87654321", db_server.taxpayer2)
-    db_server.add_user(db_server.db_path, "123456", "12345678", "admin", "admin", "admin@example.com", 1, "password123")
+    db_server.add_user(db_server.db_path, "123456", "12345678", "admin", "admin", "admin@example.com", 1, "admin")
     print("Taxpayers added successfully.")
     # server.register_instance(db_server)
     # print("Database Server is running on localhost, port 8001...")

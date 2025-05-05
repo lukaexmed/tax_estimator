@@ -1,6 +1,8 @@
 from xmlrpc.server import SimpleXMLRPCServer
 import sqlite3
 
+ip="localhost"
+port=8001
 
 class DatabaseServer:
     def __init__(self):
@@ -63,8 +65,8 @@ class DatabaseServer:
             return f"Error logging in user: {e}"
 
 def main():
-    server = SimpleXMLRPCServer(("localhost", 8001))
-    print("Database server is running on localhost, port 8001...")
+    server = SimpleXMLRPCServer((ip, port))
+    print(f"Database server is running on {ip}, port {port}...")
     db_server = DatabaseServer()
     server.register_instance(db_server)
     # print(db_server.get_taxpayer("12345678")) #test

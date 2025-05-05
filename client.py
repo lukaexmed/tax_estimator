@@ -1,32 +1,23 @@
-import random
 import re
-from unittest.mock import patch
 import xmlrpc.client
 from typing import List, Tuple
 import os
-import time
-import sys
-import glob
 import getpass
 
 
-
-CURSOR = '\033[1A'
-CLEAR = '\x1b[2K'
-CLEAR_LINE = CURSOR + CLEAR
+#colors
 RED = '\033[91m'
 GREEN = '\033[92m'
 BLUE = '\033[94m'
 RESET = '\033[0m'
 
-def clear_line():
-    print(CLEAR_LINE, end='')
-
+#clear function
 def clear_screen():
-    os.system('cls||clear') #clear the scr for unix or windows
+    os.system('cls||clear') #clear the screen for unix or windows
     return
 
-    #validate the tfn format
+#validations
+#validate the tfn format
 def validate_tfn(tfn):
     return bool(re.match('^[0-9]{8}$', tfn))
 
@@ -80,7 +71,6 @@ class TaxClient:
                 return self.login()
             elif choice == '2':
                 return self.register()
-                break
             elif choice == '3':
                 return self.guest()
             elif choice == '4':
@@ -113,16 +103,6 @@ class TaxClient:
                     break
                 print(RED+"Invalid TFN format. Please enter 8 digits."+RESET)
 
-            # #collect personal details
-            # self.first_name = input("Enter your first name: ")
-            # self.last_name = input("Enter your last name: ")
-            
-            # #collect email
-            # while 1:
-            #     self.email = input("Enter your email address: ")
-            #     if validate_email(self.email):
-            #         break
-            #     print("Invalid email format. Please try again.")
         else:
             #collect income data
             print("Enter your biweekly income data (1-26 entries):")
@@ -172,13 +152,14 @@ class TaxClient:
         
         password = getpass.getpass("Enter your password: ")
 
-        user = self.server.login(self.person_id, password)
+        user = self.server.login(self.person_id, password) #autheticate with server
         if not isinstance(user, str):
             print(GREEN + "Login successful." + RESET)
         else:
             print(RED + user + RESET)
             return False
         
+
         self.tfn = user[1] 
         self.first_name = user[2]
         self.last_name = user[3]
@@ -211,8 +192,6 @@ class TaxClient:
                 self.income_data.append((income, tax))
                 count += 1
 
-            if(input("Do you have Private Health Insurance Cover? (yes/no): ").lower() == 'yes'):
-                self.has_phic = True
 
 
         
@@ -294,7 +273,7 @@ def display_results(result):
     if isinstance(result, str):
         print(RED + result + RESET)
         return False
-    print(GREEN + "Tax Return Estimate Results:" + RESET)
+    print(GREEN + "Tax Return Estimate Results" + RESET)
     # print(f"Annual Taxable Income: ${result['annual_taxable_income']:,.2f}")
     # print(f"Total Tax Withheld: ${result['total_tax_witheld']:,.2f}")
     # print(f"Total Net Income: ${result['total_net_income']:,.2f}")
@@ -305,60 +284,6 @@ def display_results(result):
     else:
         print(GREEN + f"Tax Refund: ${result['estimated_tax_refund']:,.2f}" + RESET)
 
-def redirect_mock(input_file, output_file):
-    original_stdout = sys.stdout #for later reassignment
-    try:
-        with open(input_file, 'r') as input, open(output_file, 'w') as output:
-            sys.stdout = output     #replace print to screen with print to file
-            def mock_input(input_text_prompt):
-                output.write(input_text_prompt) #write the prompt of input(prompt)
-                output.flush() #disable buffering of output
-
-                line = input.readline() #read a line from test file 
-                output.write(line) #write a line for realistic output generation
-                output.flush() #disable buffering of the output
-                return line.strip('\n') #strip the newline as input() does
-            
-            def empty():
-                return None
-            
-            #run the main function with the mock input and without clearing the screen
-            with patch('builtins.input', mock_input), patch('__main__.clear_screen', empty), patch('getpass.getpass', mock_input):
-                return main()
-
-
-    except EOFError:
-        print("Check input file")
-        return False
-    except Exception as e:
-        print(f"An error occurred: {e}")
-        return False
-    finally:
-        sys.stdout = original_stdout
-
-def tester():
-    input_files = glob.glob("testfiles/in*.txt") #finds all the input files
-
-    test_nums = []
-    for file in input_files:
-        test_num = re.search(r'[0-9]+', file) #finds the test number in the filename
-        #print(test_num)  #debug
-        if test_num:
-            test_nums.append(test_num.group(0)) #append the regex match to the test num list
-
-
-    test_nums.sort()
-    for test_num in test_nums:
-        input_filepath = f"testfiles/in{test_num}.txt"
-        output_filepath = f"testfiles/out{test_num}.txt"
-        print(f"Test case {test_num}...", end=' ')
-        #run the mock redirection
-        finish = redirect_mock(input_filepath, output_filepath)
-        if finish:
-            print(GREEN + "Success!" + RESET)
-        else:
-            print(RED + "Failed!" + RESET)
-    
 
 def main():
     client = TaxClient()
@@ -392,5 +317,4 @@ def main():
 #entry point
 if __name__ == "__main__":
     main()
-    #tester()
 

@@ -50,18 +50,18 @@ class TaxServer:
         if data["tfn"] != "":
             income_data = self.fetch_PITD(data["tfn"])
             if isinstance(income_data, str):
-                return income_data
+                return income_data #return the error message
             income_data = income_data["income_data"]
             tfn = data["tfn"]
         else:
             tfn = "No TFN"
-            income_data = data["income_data"]
+            income_data = data["income_data"] #income data suoplied by the user
 
         #iterate through income data for and calculate the total income and tax withheld
         for income, withheld in income_data:
             sum_taxable_income += income
             sum_witheld += withheld
-            print(f"Income #{count}: {income}, Withheld #{count}: {withheld}\n")
+            print(f"Income #{count}: {income}, Withheld #{count}: {withheld}\n") #logging
             count += 1
 
         #calculate tax and medicare levy
@@ -74,8 +74,8 @@ class TaxServer:
             "annual_taxable_income": round(sum_taxable_income,2),
             "total_tax_witheld": round(sum_witheld,2),
             "total_net_income": round(sum_taxable_income - tax - medicare, 2),
-            # "medicare_levy": round(medicare, 2),
-            # "tax_liability": round(tax, 2),
+            # "medicare": round(medicare, 2),
+            # "tax": round(tax, 2),
             "estimated_tax_refund": round(sum_witheld - tax - medicare, 2),
         }
     

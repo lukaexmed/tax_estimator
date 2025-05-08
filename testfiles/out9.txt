@@ -1,0 +1,25 @@
+
+==================================================
+[94mWelcome to the Personal Income Tax Return Estimate (PITRE) System[0m
+
+==================================================
+
+Please select how you would like to proceed by entering the number:
+--------------------------------------------------
+           1. Login
+           2. Register
+           3. Guest
+           4. Exit
+--------------------------------------------------
+Enter your choice: 2
+--------------------------------------------------
+==================================================
+[94mPlease enter your credentials to register[0m
+==================================================
+Do you have a Tax File Number? (yes/no): no
+Enter your 6-digit Person ID: 333333
+Enter your first name: testname
+Enter your last name: testsurname
+Enter your email address: test@gmail.com
+Do you have Private Health Insurance Cover? (yes/no): no
+Enter your password: test[91mRegistration failed. Please try again.[0m

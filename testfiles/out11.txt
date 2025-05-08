@@ -1,0 +1,23 @@
+
+==================================================
+[94mWelcome to the Personal Income Tax Return Estimate (PITRE) System[0m
+
+==================================================
+
+Please select how you would like to proceed by entering the number:
+--------------------------------------------------
+           1. Login
+           2. Register
+           3. Guest
+           4. Exit
+--------------------------------------------------
+Enter your choice: 1
+--------------------------------------------------
+==================================================
+[94mPlease enter your credentials to log into the system[0m
+==================================================
+Enter your 6-digit Person ID: 123456
+Enter your password: admin
+[92mLogin successful.[0m
+[92mTax Return Estimate Results[0m
+[92mTax Refund: $1,607.50[0m

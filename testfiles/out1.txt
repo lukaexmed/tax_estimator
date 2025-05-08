@@ -1,0 +1,21 @@
+
+==================================================
+[94mWelcome to the Personal Income Tax Return Estimate (PITRE) System[0m
+
+==================================================
+
+Please select how you would like to proceed by entering the number:
+--------------------------------------------------
+           1. Login
+           2. Register
+           3. Guest
+           4. Exit
+--------------------------------------------------
+Enter your choice: 3
+--------------------------------------------------
+[94mWelcome to the Personal Income Tax Return Estimate (PITRE) System[0m
+Do you have a Tax File Number? (yes/no): yes
+Enter your 6-digit Person ID: 123456
+Enter your 8-digit Tax File Number: 12345678
+Do you have Private Health Insurance Cover? (yes/no): yes[92mTax Return Estimate Results[0m
+[92mTax Refund: $1,607.50[0m

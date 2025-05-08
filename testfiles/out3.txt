@@ -1,0 +1,21 @@
+
+==================================================
+[94mWelcome to the Personal Income Tax Return Estimate (PITRE) System[0m
+
+==================================================
+
+Please select how you would like to proceed by entering the number:
+--------------------------------------------------
+           1. Login
+           2. Register
+           3. Guest
+           4. Exit
+--------------------------------------------------
+Enter your choice: 3
+--------------------------------------------------
+[94mWelcome to the Personal Income Tax Return Estimate (PITRE) System[0m
+Do you have a Tax File Number? (yes/no): yes
+Enter your 6-digit Person ID: 123456
+Enter your 8-digit Tax File Number: 12345677
+Do you have Private Health Insurance Cover? (yes/no): yes
+[91mNo tax records found for the person with TFN = 12345677.[0m

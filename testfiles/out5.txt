@@ -1,0 +1,38 @@
+
+==================================================
+[94mWelcome to the Personal Income Tax Return Estimate (PITRE) System[0m
+
+==================================================
+
+Please select how you would like to proceed by entering the number:
+--------------------------------------------------
+           1. Login
+           2. Register
+           3. Guest
+           4. Exit
+--------------------------------------------------
+Enter your choice: 3
+--------------------------------------------------
+[94mWelcome to the Personal Income Tax Return Estimate (PITRE) System[0m
+Do you have a Tax File Number? (yes/no): no
+Enter your 6-digit Person ID: 123456
+Enter your biweekly income data (1-26 entries):
+Enter taxable income #1 (or -1 to finish): 4000
+Enter tax withheld for income #1: 200
+Enter taxable income #2 (or -1 to finish): 4300
+Enter tax withheld for income #2: 230
+Enter taxable income #3 (or -1 to finish): 5100
+Enter tax withheld for income #3: 400
+Enter taxable income #4 (or -1 to finish): 3700
+Enter tax withheld for income #4: 270
+Enter taxable income #5 (or -1 to finish): 6500
+Enter tax withheld for income #5: 560
+Enter taxable income #6 (or -1 to finish): 7000
+Enter tax withheld for income #6: 800
+Enter taxable income #7 (or -1 to finish): 5600
+Enter tax withheld for income #7: 400
+Enter taxable income #8 (or -1 to finish): 4300
+Enter tax withheld for income #8: 350
+Enter taxable income #9 (or -1 to finish): -1
+Do you have Private Health Insurance Cover? (yes/no): no[92mTax Return Estimate Results[0m
+[92mTax Owed: $2,647.00[0m
